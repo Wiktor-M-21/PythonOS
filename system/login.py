@@ -45,7 +45,7 @@ def update_last_logged_in(file_path, username):
     # Update the 'Last Logged In' timestamp for the specific user
     for row in rows:
         if row['Username'] == username:
-            row['Last Logged In'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            row['Last Logged In'] = "True"
 
     # Write back the updated data
     with open(file_path, mode='w', newline='') as file:
@@ -87,3 +87,26 @@ def login_system():
     
     return user, logged_in_username
 
+def logout(username):
+    rows = []
+    with open(file_path, mode='r') as file:
+        reader = csv.DictReader(file)
+        rows = list(reader)
+
+    for row in rows:
+        if row['Username'] == username:
+            row['Last Logged In'] = "False"
+
+    # Write back the updated data
+    with open(file_path, mode='w', newline='') as file:
+        fieldnames = ['Name', 'Username', 'Password', 'Last Logged In']
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+        log_user_logout(username)
+
+def log_user_logout(username):
+    log_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'login_log.txt')
+    with open(log_file, mode='a') as file:  # Open in append mode to add new log entries
+        log_entry = f"User '{username}' logged out at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+        file.write(log_entry)
