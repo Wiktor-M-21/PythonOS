@@ -1,7 +1,9 @@
-import touchid
 import platform
 import os
-import system.colours
+import system.colours as c
+if platform.system() == "Darwin":
+    import touchid
+
 
 def check_machine():
     machine = platform.system()
@@ -38,7 +40,7 @@ def auth_sys(machine_type):
                 print("Authentication Successful")
                 return True
             else:
-                print("Authentication Failed: Invalid Code")
+                print(f"{c.RED}Authentication Failed: Invalid Code{c.RESET}")
                 return False
         else:
             return False
@@ -46,7 +48,7 @@ def auth_sys(machine_type):
         print("TouchID is not available")
         pincode = input("Please input code \n> ")
         if pincode == correctpin:
-            print("Authentication Successful")
+            print(f"{c.GREEN}Authentication Successful{c.RESET}")
             return True
         else:
             print("Authentication Failed: Invalid Code")
