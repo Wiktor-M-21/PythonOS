@@ -59,7 +59,7 @@ if platform.system() not in ["Darwin","Linux"]:
 
 username = ""
 admin_acc = False
-version = "1.0"
+version = "1.0.1"
 user = False
 runtime = 0
 ter.clear_ter(mach_type)
