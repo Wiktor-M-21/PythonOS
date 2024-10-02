@@ -10,3 +10,4 @@ exit,Shuts down the system,optional: -force/-f,none
 calc,Calculator app,,user
 chess,Opens the Chess app,,user
 user,Management of User accounts,required: -add -list -modify -remove,admin
+debug,Used for debugging the terminal,required: -colour,none

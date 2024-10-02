@@ -32,6 +32,7 @@ def read_credentials(file_path):
             credentials[row['Username']] = {
                 'name': row['Name'],
                 'password': row['Password'],
+                'pincode': row['Pincode'],
                 'last_logged_in': row['Last Logged In']
             }
     return credentials
@@ -49,7 +50,7 @@ def update_last_logged_in(file_path, username):
 
     # Write back the updated data
     with open(file_path, mode='w', newline='') as file:
-        fieldnames = ['Name', 'Username', 'Password', 'Last Logged In']
+        fieldnames = ['Name', 'Username', 'Password','Pincode', 'Last Logged In']
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
@@ -99,7 +100,7 @@ def logout(username):
 
     # Write back the updated data
     with open(file_path, mode='w', newline='') as file:
-        fieldnames = ['Name', 'Username', 'Password', 'Last Logged In']
+        fieldnames = ['Name', 'Username', 'Password','Pincode', 'Last Logged In']
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
@@ -110,3 +111,40 @@ def log_user_logout(username):
     with open(log_file, mode='a') as file:  # Open in append mode to add new log entries
         log_entry = f"User '{username}' logged out at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
         file.write(log_entry)
+
+def check_last_logged_in():
+    """
+    This function checks if any row in a CSV file contains 'True' in the 'Last Logged In' column (index 4),
+    and returns a tuple with a boolean value and the first row where this condition is met.
+
+    Args:
+    csv_file (str): The path to the CSV file.
+
+    Returns:
+    tuple: (True, row) if a row contains 'True' in 'Last Logged In', otherwise (False, None).
+    """
+    with open(file_path, mode='r', newline='') as file:
+        reader = csv.reader(file)
+        # Read the header row
+        header = next(reader)
+        
+        # Ensure we check for the exact header name (case-sensitive and trimmed)
+        header = [h.strip() for h in header]  # Remove any leading/trailing spaces from the header columns
+        
+        # Check if the 'Last Logged In' column is at index 3 (case-sensitive)
+        if len(header) <= 4 or header[4] != "Last Logged In":
+            raise ValueError("Expected 'Last Logged In' column at index 4.")
+        
+        # Iterate over each row in the CSV
+        for row in reader:
+            # Ensure the row has at least 4 columns
+            if len(row) > 4:
+                # Check if the value at index 4 (Last Logged In) is 'True'
+                if row[4].strip().lower() == 'true':  # CSV data is read as strings, hence 'true'
+                    return (True, row)  # Return True and the first matching row
+
+    # Return False and None if no 'Last Logged In' is True
+    return (False, None)
+
+
+

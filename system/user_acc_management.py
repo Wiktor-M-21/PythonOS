@@ -11,7 +11,7 @@ FILE_PATH = os.path.join(CURRENT_DIR, 'credentials.csv')
 if not os.path.exists(FILE_PATH):
     with open(FILE_PATH, 'w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(['Name', 'Username', 'Password'])  # Create headers
+        writer.writerow(['Name', 'Username', 'Password','Pincode'])  # Create headers
 
 def username_exists(username):
     """Check if a username already exists in the file."""
@@ -34,6 +34,7 @@ def add_user():
     name = input("Enter name: ").strip()
     username = input("Enter username: ").strip()
     password = input("Enter password: ").strip()
+    pincode = input("Enter a pincode: ").strip()
     
     # Check if username already exists
     if username_exists(username):
@@ -42,7 +43,7 @@ def add_user():
 
     with open(FILE_PATH, 'a', newline='') as f:  # Open in append mode
         writer = csv.writer(f)
-        writer.writerow([name, username, password])
+        writer.writerow([name, username, password, pincode, "False"])
     print(f'User {username} added.')
 
 def remove_user():
@@ -101,6 +102,7 @@ def modify_user():
                     return
 
                 password = input("Enter new password (or press Enter to keep current): ").strip()
+                pincode = input("Enter new pincode (or press Enter to keep current): ").strip()
                 
                 # Update the user details if inputs are given
                 if name:
@@ -109,6 +111,8 @@ def modify_user():
                     row[1] = new_username
                 if password:
                     row[2] = password
+                if pincode:
+                    row[3] = pincode
                 
                 print(f'User {username} modified.')
             writer.writerow(row)  # Write back all rows, including the modified user
@@ -120,11 +124,11 @@ def list_users(show_passwords=False):
     with open(FILE_PATH, 'r') as f:
         reader = csv.reader(f)
         header = next(reader)
-        print(f"{'Name':<15} {'Username':<15} {'Password':<15}" if show_passwords else f"{'Username':<15}")
+        print(f"{'Name':<15} {'Username':<15} {'Password':<15} {'Pincode':<6}" if show_passwords else f"{'Username':<15}")
         print('-' * 45)
         for row in reader:
             if show_passwords:
-                print(f"{row[0]:<15} {row[1]:<15} {row[2]:<15}")
+                print(f"{row[0]:<15} {row[1]:<15} {row[2]:<15} {row[3]:<6}")
             else:
                 print(f"{row[1]:<15}")
 

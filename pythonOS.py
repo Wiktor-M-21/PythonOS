@@ -57,10 +57,42 @@ if platform.system() not in ["Darwin","Linux"]:
         print("Your OS is not compatible with this version of PyOS")
 
 
-username = ""
+
+is_logged_in, rows = authentication.check_last_logged_in()
+retry = 0
+if is_logged_in == True:
+    while retry == 0:
+        ter.clear_ter(mach_type)
+        user_choice = input(f"{c.BLUE}user {rows[0]} is logged in.{c.RESET} \nWould you like to continue as {rows[1]}\n(y/n)\n> ")
+        if user_choice == "y":
+            user_password = input("Enter your pincode \n> ")
+            retry2 = 0
+            while retry2 == 0:
+                if user_password == rows[3]:
+                    username = rows[1]
+                    user = True
+                    retry = 1
+                    retry2 = 1
+                else:
+                    print(f"{c.RED}Passcode is incorrect{c.RESET}")
+                    time.sleep(1)
+                    ter.clear_ter(mach_type)
+                    user_choice = ("Would you like to try again? \n(y/n) \n> ")
+                    break
+
+        elif user_choice =="n":
+            authentication.logout(rows[1])
+            user = False
+            retry = 1
+        else:
+            pass
+else:
+    username = ""
+    user = False
+
+
 admin_acc = False
-version = "1.0.1"
-user = False
+version = "1.0.3"
 runtime = 0
 ter.clear_ter(mach_type)
 print("PyOS vers",version)

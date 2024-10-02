@@ -12,6 +12,9 @@ def check_machine():
         if touchid_avail:
             machine_type = 0
             return machine_type
+        else:
+            machine_type = 2
+            return machine_type
     elif machine == "windows":
         machine_type = 1
         return machine_type
@@ -25,6 +28,7 @@ def auth_sys(machine_type):
     if machine_type == 0:
         user_choice = input("Would you like to verify with fingerprint? (y/n) \n>")
         if user_choice == "y":
+            auth = False
             try:
                 auth = touchid.authenticate()
             except:
