@@ -2,7 +2,7 @@ import system.colours as c
 import os
 import math
 
-version = 1.2
+version = "1.3.1"
 
 def clear():
     os.system("clear")
@@ -22,6 +22,7 @@ def calculator():
             print(f"{c.GREEN}base     {c.BLUE}Binary, Denary and Hex converter     {c.YELLOW}Converts Binary, Denary or Hex to each other")
             print(f"{c.GREEN}pyth     {c.BLUE}Pythagoras                           {c.YELLOW}Calculates lengths of triangles")
             print(f"{c.GREEN}trig     {c.BLUE}Triginometry                         {c.YELLOW}Calculates angles and lengths in right angled triangles")
+            print(f"{c.GREEN}snco     {c.BLUE}Sine and Cosine rule                 {c.YELLOW}Allows for calculation of sides and angles using sine and cosine rule")
             print(f"{c.RESET}You can use the following operators...")
             print(f"{c.GREEN}+        {c.BLUE}Addition                             ")
             print(f"{c.GREEN}-        {c.BLUE}Subtraction                          ")
@@ -46,13 +47,14 @@ def calculator():
                     "**": "Exponent: Raises the first number to the power of the second. Example: 2 ** 3 = 8",
                     "//": "Floor Division: Divides and rounds down to the nearest integer. Example: 7 // 3 = 2",
                     "?": "Brings up all functions and commands that are available only usable in the main command line of the Calculator. Add a command at the end to learn about a specific command and an example usage of it. Example: help -",
-                    "v": "Square root: Returns the square root of a number. Example: v9 = 3.0",
+                    "v": "Square root: Returns the square root of a number. Example: v9 = 3",
                     "h": "Brings up all functions and commands that are available only usable in the main command line of the Calculator. Add a command at the end to learn about a specific command and an example usage of it. Example: help -",
                     "exit": "Allows the user to exit this program. Functional at any input line",
                     "help": "Brings up all functions and commands that are available only usable in the main command line of the Calculator. Add a command at the end to learn about a specific command and an example usage of it. Example: help -",
                     "base": "Base 2,10,16: Calculates between Binary (Base 2), Denary (Base 10) and Hexadecimal (Base 16). Example: 10110010 = 178 = B2",
                     "pyth": "Pythagoras: Allows you to calculate a third side of a triangle with 2 sides. Example: A = 3, B = 4 C = 5",
-                    "trig": "Trigometry: Calculate sides with adjacent angles. ",
+                    "trig": "Trigonometry: Calculates sides or angles using trigonometric functions (sine, cosine, tangent). Example: Find the opposite side given hypotenuse = 10 and angle = 30° → opposite = 10 * sin(30) = 5",
+                    "snco": "Sine and Cosine Rule: Solves for sides and angles in non-right triangles. Example: Using the Sine Rule: If A = 40°, a = 8, and B = 60°, then b = (8 * sin(60)) / sin(40) ≈ 11.5",
                 }
 
                 if operator in help_messages:
