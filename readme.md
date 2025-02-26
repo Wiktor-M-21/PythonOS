@@ -9,7 +9,7 @@ Triginometry
 Pythagores
 Adding help to specific commands and operators
 
-- **Calculator version 1.2**:
+- **Calculator version 1.2 (current version)**:
 Binary
 Denary
 Hex
