@@ -3,7 +3,7 @@ Python OS version 1.0.3:
 <ins>**pythonOS main shell terminal**</ins>
 
 - **Shell version 1.0.3 (current version)**:
-
+help commands
 
 
 <ins>**Calculator app**</ins>
