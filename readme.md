@@ -2,7 +2,7 @@ Python OS version 1.0.3:
 
 
 
-Calculator app
+<ins>**Calculator app**</ins>
 
 - **Calculator version 1.1**:
 Triginometry
