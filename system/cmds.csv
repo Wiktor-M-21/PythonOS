@@ -1,0 +1,13 @@
+Name,Description,Arguments,User Required
+admin,Allows for admin access,Required: -fp(fingerprint)/-{auth code},none
+clear,Clears terminal shell,,none
+help,Shows help,,none
+login,Allows you to log in,,none
+logout,Allows you to log out,optional: -a for admin,user
+machine,Check your machines software,,none
+print,Prints what user inputted,[{text}],none
+exit,Shuts down the system,optional: -force/-f,none
+calc,Calculator app,,user
+chess,Opens the Chess app,,user
+user,Management of User accounts,required: -add -list -modify -remove,admin
+debug,Used for debugging the terminal,required: -colour,none
