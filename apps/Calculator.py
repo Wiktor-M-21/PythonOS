@@ -113,6 +113,8 @@ def calculator():
                     resultc = resulta + resultb
                     result = math.sqrt(resultc)
                     print(f"Side C: {round(result,3)}")
+                    print(f"\n\nCalculator vers {version}")
+                    print(f"Please enter an equation or command\n{c.BLUE}If you need help type: \"?\"{c.RESET}")
                     break
 
                 elif apyth == "calc":  # Calculate A
@@ -125,6 +127,9 @@ def calculator():
                     else:
                         result = math.sqrt(cpyth ** 2 - bpyth ** 2)
                         print(f"Side A is: {round(result,3)}")
+                        print(f"\n\nCalculator vers {version}")
+                        print(f"Please enter an equation or command\n{c.BLUE}If you need help type: \"?\"{c.RESET}")
+                        break
 
                 elif bpyth == "calc":  # Calculate B
                     print("Calculating Side B")
@@ -136,6 +141,8 @@ def calculator():
                     else:
                         result = math.sqrt(cpyth ** 2 - apyth ** 2)
                         print(f"Side B is: {round(result,3)}")
+                        print(f"\n\nCalculator vers {version}")
+                        print(f"Please enter an equation or command\n{c.BLUE}If you need help type: \"?\"{c.RESET}")
                         break
                 
                 else:
@@ -204,7 +211,6 @@ def calculator():
                 elif hypotenuse != "calc":
                     hypotenuse = float(hypotenuse)
 
-                # Validate input: Must have at least one side and optionally an angle
                 given_sides = sum(1 for x in [opposite, adjacent, hypotenuse] if isinstance(x, float))
                 if given_sides == 0:
                     print(f"{c.RED}Error: You must provide at least one side.{c.RESET}")
@@ -216,7 +222,6 @@ def calculator():
                 if angle is not None:
                     angle_rad = math.radians(angle)
 
-                # Calculate missing values
                 if opposite == "calc":
                     if hypotenuse is not None:
                         opposite = hypotenuse * math.sin(angle_rad)
@@ -235,7 +240,7 @@ def calculator():
                     elif adjacent is not None:
                         hypotenuse = adjacent / math.cos(angle_rad)
 
-                if angle is None:  # Calculate angle if not given
+                if angle is None:
                     if opposite is not None and hypotenuse is not None:
                         angle = math.degrees(math.asin(opposite / hypotenuse))
                     elif adjacent is not None and hypotenuse is not None:
@@ -243,7 +248,6 @@ def calculator():
                     elif opposite is not None and adjacent is not None:
                         angle = math.degrees(math.atan(opposite / adjacent))
 
-                # Display results
                 if angle is not None:
                     print(f"The angle is: {angle:.2f}°")
                 if opposite is not None:
@@ -252,8 +256,104 @@ def calculator():
                     print(f"The adjacent side is: {adjacent:.2f}")
                 if hypotenuse is not None:
                     print(f"The hypotenuse is: {hypotenuse:.2f}")
-
+                print(f"\n\nCalculator vers {version}")
+                print(f"Please enter an equation or command\n{c.BLUE}If you need help type: \"?\"{c.RESET}")
                 break
+
+        elif user_equation == "sincos":
+            print("Sine and Cosine Rule Calculator")
+            intro = input("Introduction? (y/n)\n> ").lower()
+            if intro == "y":
+                print("\nThis tool calculates missing sides or angles in any triangle using the Sine and Cosine rules.")
+                print("Type \"calc\" for the value you want to find.")
+                print("Press enter ⏎ for values that do not apply.")
+                print("At any point, type \"exit\" to return to the main menu.")
+            elif intro == "exit":
+                return
+
+            while True:
+                print("\nWhich values do you have?")
+                
+                def get_input(prompt):
+                    value = input(f"{prompt} = ").strip().lower()
+                    if value == "exit":
+                        return "exit"
+                    if value == "":
+                        return None
+                    if value == "calc":
+                        return "calc"
+                    try:
+                        return float(value)
+                    except ValueError:
+                        print("Error: Invalid input. Enter a number or \"calc\".")
+                        return get_input(prompt)
+
+                sidea = get_input("Side A")
+                if sidea == "exit": break
+                sideb = get_input("Side B")
+                if sideb == "exit": break
+                sidec = get_input("Side C")
+                if sidec == "exit": break
+                anglea = get_input("Angle A (degrees)")
+                if anglea == "exit": break
+                angleb = get_input("Angle B (degrees)")
+                if angleb == "exit": break
+                anglec = get_input("Angle C (degrees)")
+                if anglec == "exit": break
+                
+                given_sides = sum(1 for x in [sidea, sideb, sidec] if isinstance(x, float))
+                given_angles = sum(1 for x in [anglea, angleb, anglec] if isinstance(x, float))
+
+                if given_sides == 0:
+                    print("Error: You must provide at least one side.")
+                    continue
+                if given_angles == 2:
+                    anglec = 180 - (anglea + angleb)
+                
+                if anglea == "calc" and sideb and sidec:
+                    anglea = math.degrees(math.acos((sideb**2 + sidec**2 - sidea**2) / (2 * sideb * sidec)))
+                if angleb == "calc" and sidea and sidec:
+                    angleb = math.degrees(math.acos((sidea**2 + sidec**2 - sideb**2) / (2 * sidea * sidec)))
+                if anglec == "calc" and sidea and sideb:
+                    anglec = math.degrees(math.acos((sidea**2 + sideb**2 - sidec**2) / (2 * sidea * sideb)))
+
+                if sidea == "calc":
+                    if angleb and anglec:
+                        sidea = (sideb / math.sin(math.radians(angleb))) * math.sin(math.radians(anglea))
+                    elif angleb and sidec:
+                        sidea = math.sqrt(sideb**2 + sidec**2 - 2 * sideb * sidec * math.cos(math.radians(anglea)))
+
+                if sideb == "calc":
+                    if anglea and anglec:
+                        sideb = (sidea / math.sin(math.radians(anglea))) * math.sin(math.radians(angleb))
+                    elif anglea and sidec:
+                        sideb = math.sqrt(sidea**2 + sidec**2 - 2 * sidea * sidec * math.cos(math.radians(angleb)))
+
+                if sidec == "calc":
+                    if anglec is None and anglea and angleb:
+                        anglec = 180 - (anglea + angleb)
+                    if anglea and sidea and anglec:
+                        sidec = (sidea / math.sin(math.radians(anglea))) * math.sin(math.radians(anglec))
+                    elif anglec and sidea and sideb:
+                        sidec = math.sqrt(sidea**2 + sideb**2 - 2 * sidea * sideb * math.cos(math.radians(anglec)))
+                    else:
+                        print("Error: Not enough values to calculate Side C.")
+                        continue
+                print(" ")
+                print("\nResults:")
+                if anglea is not None: print(f"Angle A: {anglea:.2f}°")
+                if angleb is not None: print(f"Angle B: {angleb:.2f}°")
+                if anglec is not None: print(f"Angle C: {anglec:.2f}°")
+                if sidea is not None: print(f"Side A: {sidea:.2f}")
+                if sideb is not None: print(f"Side B: {sideb:.2f}")
+                if sidec is not None: print(f"Side C: {sidec:.2f}")
+
+                print(f"\n\nCalculator vers {version}")
+                print(f"Please enter an equation or command\n{c.BLUE}If you need help type: \"?\"{c.RESET}")
+                break
+
+
+
         elif user_equation == "base":
             print("Base number calculator")
             print("Select from below the system your digits are in")
@@ -263,6 +363,7 @@ def calculator():
             while True:
                 baseselect = input("> ")
                 baseselect = baseselect.lower()
+                
                 if baseselect == "binary" or baseselect == "1":
                     print("Binary")
                     print("Input a valid binary number")
@@ -271,12 +372,19 @@ def calculator():
                         if set(digit) <= {"0", "1"}:
                             print(f"Denary: {int(digit, 2)}")
                             print(f"Hexadecimal: {hex(int(digit, 2))[2:]}")
-                            print("")
+                            print("\n\nSelect from below the system your digits are in")
+                            print(f"{c.GREEN}1. Binary (base 2){c.RESET}")
+                            print(f"{c.GREEN}2. Denary (base 10){c.RESET}")
+                            print(f"{c.GREEN}3. Hexadecimal (base 16){c.RESET}")
+                            break
+                        elif digit == "exit":
+                            print("Returning to Base Number Calculator")
                             print("Select from below the system your digits are in")
                             print(f"{c.GREEN}1. Binary (base 2){c.RESET}")
                             print(f"{c.GREEN}2. Denary (base 10){c.RESET}")
                             print(f"{c.GREEN}3. Hexadecimal (base 16){c.RESET}")
                             break
+                        
                         else:
                             print(f"{c.RED}Error: Invalid format{c.RESET}")
                             continue
@@ -288,6 +396,11 @@ def calculator():
                         if digit.isdigit():
                             print(f"Binary: {bin(int(digit, 10))[2:]}")
                             print(f"Hexadecimal: {hex(int(digit, 10))[2:]}")
+                            print("\n\nSelect from below the system your digits are in")
+                            print(f"{c.GREEN}1. Binary (base 2){c.RESET}")
+                            print(f"{c.GREEN}2. Denary (base 10){c.RESET}")
+                            print(f"{c.GREEN}3. Hexadecimal (base 16){c.RESET}")
+                            break
                         elif digit == "exit":
                             print("Returning to Base Number Calculator")
                             print("Select from below the system your digits are in")
@@ -306,6 +419,11 @@ def calculator():
                         if set(digit) <= set("0123456789ABCDEFabcdef"):
                             print(f"Binary: {bin(int(digit, 16))[2:]}")
                             print(f"Decimal: {int(digit, 16)}")
+                            print("\n\nSelect from below the system your digits are in")
+                            print(f"{c.GREEN}1. Binary (base 2){c.RESET}")
+                            print(f"{c.GREEN}2. Denary (base 10){c.RESET}")
+                            print(f"{c.GREEN}3. Hexadecimal (base 16){c.RESET}")
+                            break
                         elif digit == "exit":
                             print("Returning to Base Number Calculator")
                             print("Select from below the system your digits are in")
@@ -318,7 +436,12 @@ def calculator():
                             print(f"{c.RED}Error: Invalid format{c.RESET}")
                             continue
                 elif baseselect == "exit":
-                        break
+                    print(f"\n\nCalculator vers {version}")
+                    print(f"Please enter an equation or command\n{c.BLUE}If you need help type: \"?\"{c.RESET}")
+                    break
+                
+                else:
+                    print(f"{c.RED}Error: Invaild input{c.RESET}")
                         
                     
 
