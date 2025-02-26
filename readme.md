@@ -4,11 +4,10 @@ Calculator version 1.1 update:
 Triginometry
 Pythagores
 Adding help to specific commands and operators
-
 Calculator version 1.2:
 Binary
 Denary
 Hex
-Sin and Cos rules
 Calculator version 1.3:
+Sin and Cos rules
 Clearer understanding of when returing to main menu

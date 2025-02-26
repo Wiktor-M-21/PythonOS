@@ -2,7 +2,7 @@ import system.colours as c
 import os
 import math
 
-version = 1.3
+version = 1.2
 
 def clear():
     os.system("clear")
