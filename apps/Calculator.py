@@ -1,6 +1,7 @@
 import system.colours as c
 import os
 import math
+import textwrap
 
 version = "1.3.1"
 
@@ -17,7 +18,7 @@ def calculator():
         user_equation = input("> ")
         if user_equation in ["help","h","?"]:
             print("Here are all available commands and operators")
-            print(f"{c.GREEN}?        {c.BLUE}Help                                 {c.YELLOW}Exits the program: args: -f to force exit OS")
+            print(f"{c.GREEN}?        {c.BLUE}Help                                 {c.YELLOW}Shows this help output giving all commands available")
             print(f"{c.GREEN}exit     {c.BLUE}Exits                                {c.YELLOW}Exits the program: args: -f to force exit OS")
             print(f"{c.GREEN}base     {c.BLUE}Binary, Denary and Hex converter     {c.YELLOW}Converts Binary, Denary or Hex to each other")
             print(f"{c.GREEN}pyth     {c.BLUE}Pythagoras                           {c.YELLOW}Calculates lengths of triangles")
@@ -33,8 +34,8 @@ def calculator():
             print(f"{c.GREEN}//       {c.BLUE}Floor division                       {c.YELLOW}Rounds to the nearest intiger")
             print(f"{c.GREEN}v        {c.BLUE}Square root                          {c.YELLOW}Reverse of powers giving the number used to multiply together to get number inputed")
             print(f"{c.RESET}")
-        elif user_equation.startswith(("help ", "h ", "? ")):  # Check for specific operator help
-            parts = user_equation.split(" ")
+        elif user_equation.startswith(("help -", "h -", "? -")):  # Check for specific operator help
+            parts = user_equation.split(" -")
             if len(parts) > 1:
                 operator = parts[1]
 
@@ -46,22 +47,28 @@ def calculator():
                     "%": "Modulus: Gives the remainder of a division. Example: 7 % 3 = 1",
                     "**": "Exponent: Raises the first number to the power of the second. Example: 2 ** 3 = 8",
                     "//": "Floor Division: Divides and rounds down to the nearest integer. Example: 7 // 3 = 2",
-                    "?": "Brings up all functions and commands that are available only usable in the main command line of the Calculator. Add a command at the end to learn about a specific command and an example usage of it. Example: help -",
+                    "?": "Displays available commands. Use '? -<command>' to get details. Example: help -+",
                     "v": "Square root: Returns the square root of a number. Example: v9 = 3",
-                    "h": "Brings up all functions and commands that are available only usable in the main command line of the Calculator. Add a command at the end to learn about a specific command and an example usage of it. Example: help -",
-                    "exit": "Allows the user to exit this program. Functional at any input line",
-                    "help": "Brings up all functions and commands that are available only usable in the main command line of the Calculator. Add a command at the end to learn about a specific command and an example usage of it. Example: help -",
-                    "base": "Base 2,10,16: Calculates between Binary (Base 2), Denary (Base 10) and Hexadecimal (Base 16). Example: 10110010 = 178 = B2",
-                    "pyth": "Pythagoras: Allows you to calculate a third side of a triangle with 2 sides. Example: A = 3, B = 4 C = 5",
-                    "trig": "Trigonometry: Calculates sides or angles using trigonometric functions (sine, cosine, tangent). Example: Find the opposite side given hypotenuse = 10 and angle = 30° → opposite = 10 * sin(30) = 5",
+                    "h": "Displays available commands. Use 'h -<command>' to get details. Example: help -+",
+                    "exit": "Exits the program. Works at any input line.",
+                    "help": "Displays available commands. Use 'help -<command>' to get details. Example: help -+",
+                    "base": "Number Base Conversion: Converts between Binary (Base 2), Decimal (Base 10), and Hexadecimal (Base 16). Example: 10110010 = 178 = B2",
+                    "pyth": "Pythagorean Theorem: Calculates the third side of a right triangle given two sides. Example: A = 3, B = 4, C = 5",
+                    "trig": "Trigonometry: Calculates sides or angles using sine, cosine, or tangent. Example: Find the opposite side given hypotenuse = 10 and angle = 30° → opposite = 10 * sin(30) = 5",
                     "snco": "Sine and Cosine Rule: Solves for sides and angles in non-right triangles. Example: Using the Sine Rule: If A = 40°, a = 8, and B = 60°, then b = (8 * sin(60)) / sin(40) ≈ 11.5",
                 }
 
                 if operator in help_messages:
-                    print(f"{c.GREEN}{operator.ljust(9)}{c.BLUE}{help_messages[operator]}{c.RESET}")
+                    description = help_messages[operator]
+                    indent_size = 12  # Consistent spacing
+                    formatted_text = textwrap.fill(
+                        description,
+                        width=120 - indent_size,  # Adjust width to avoid early breaks
+                        subsequent_indent=" " * indent_size  # Ensures continuation lines align neatly
+                    )
+                    print(f"{c.GREEN}{operator.ljust(12)}{c.BLUE}{formatted_text}{c.RESET}")
                 else:
                     print(f"{c.RED}Unknown operator: {operator}. Try '? +' for help with addition.{c.RESET}")
-
 
         elif user_equation.startswith("exit"):
             if user_equation == "exit":
@@ -466,5 +473,3 @@ def calculator():
                 print(f"{c.RED}Calc Error: Do not use names{c.RESET}")
             except ZeroDivisionError:
                 print(f"{c.RESET}Calc Error: Division by 0{c.RESET}")
-
-calculator()

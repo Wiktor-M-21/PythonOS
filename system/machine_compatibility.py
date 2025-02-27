@@ -65,3 +65,14 @@ def clear_ter(machine_type):
         os.system("cls")
     else:
         print("ERROR")
+
+def fingerprint_trial():
+    auth = False
+    try:
+        auth = touchid.authenticate()
+        if auth == True:
+            return True
+        else:
+            return False
+    except:
+        pass

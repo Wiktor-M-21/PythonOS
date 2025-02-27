@@ -2,9 +2,16 @@ Python OS version 1.0.3:
 
 <ins>**pythonOS main shell terminal**</ins>
 
-- **Shell version 1.0.3 (current version)**:
-help commands
+- **Shell version 1.0.3**:
+help commands improved
 
+- **Shell version 1.0.4 (current version)**
+help command allignment
+help commands for specific commands
+
+-**Shell version 1.0.5**
+help command fix
+user account control modification
 
 <ins>**Calculator app**</ins>
 
