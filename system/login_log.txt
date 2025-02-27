@@ -36,3 +36,5 @@ User 'wiktor' logged in at 2025-02-25 09:02:33
 User 'wiktor' logged out at 2025-02-25 11:53:03
 User 'wiktor' logged in at 2025-02-25 11:53:13
 User 'wiktor' logged out at 2025-02-26 19:09:46
+User 'wiktor' logged in at 2025-02-27 20:22:56
+User 'wiktor' logged out at 2025-02-27 20:26:30

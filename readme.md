@@ -11,7 +11,9 @@ help commands for specific commands
 
 -**Shell version 1.0.5**
 help command fix
-user account control modification
+command - added new command to create custom commands
+command - added command type to allow for filtering
+user account control - users can become admins removing the seperate admin section
 
 <ins>**Calculator app**</ins>
 

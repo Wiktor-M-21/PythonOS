@@ -1,118 +1,221 @@
 import csv
 import textwrap
-import sys  # Added for command-line argument parsing
+import sys
+import argparse
 import system.colours as colour
 
-def display_commands(admin=False, user=False, specific_command=None):
-    # Load the CSV file
+CSV_FILE = "system/cmds.csv"
+
+# Default column widths
+NAME_MIN_WIDTH = 15
+DESC_WIDTH = 40
+ARG_MIN_WIDTH = 15
+
+
+def load_commands():
+    """Loads commands from CSV file."""
     commands = []
-    with open('system/cmds.csv', newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            command = {key.strip(): value.strip() for key, value in row.items()}
-            commands.append(command)
+    try:
+        with open(CSV_FILE, newline='', encoding="utf-8") as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                command = {key.strip(): value.strip() for key, value in row.items()}
+                commands.append(command)
+    except FileNotFoundError:
+        print(f"{colour.RED}Error: Command file '{CSV_FILE}' not found.{colour.RESET}")
+        sys.exit(1)
+    return commands
 
-    # Filter commands based on user/admin state
-    none_commands = [cmd for cmd in commands if cmd.get("User Required", "") == "none"]
-    user_commands = [cmd for cmd in commands if cmd.get("User Required", "") == "user"]
-    admin_commands = [cmd for cmd in commands if cmd.get("User Required", "") == "admin"]
 
-    # If a specific command is requested, display its details
-    if specific_command:
-        display_specific_command(specific_command, commands)
-        return  # Exit after displaying the specific command
-
-    # Dynamically adjust column widths
-    max_name_length = max(len(cmd["Name"]) for cmd in commands) if commands else 15
-    max_arg_length = max(len(cmd["Arguments"]) for cmd in commands) if commands else 15
-
-    # Set minimum widths
-    name_width = max(max_name_length, 15) + 2  # Minimum width of 15 for "Command"
-    description_width = 40  # Initial width for description
-    argument_width = max(max_arg_length, 15) + 2  # Minimum width of 15 for "Argument"
-
-    # Adjust description width if any command name exceeds the current name_width
+def categorize_commands(commands):
+    """Categorizes commands based on access level."""
+    categorized = {"none": [], "user": [], "admin": []}
     for cmd in commands:
-        if len(cmd["Name"]) > name_width - 2:  # Check if name exceeds current width
-            name_width = len(cmd["Name"]) + 7  # Add 5 extra spaces for padding
-            description_width = 40  # Reset description width
+        user_required = cmd.get("User Required", "").lower()
+        if user_required in categorized:
+            categorized[user_required].append(cmd)
+    return categorized
 
-    # Calculate the maximum separator length
-    separator_length = name_width + description_width + argument_width + 2  # +2 for spaces
 
-    # Header
-    print(f"{colour.GREEN}{'Command':<{name_width}} {colour.BLUE}{'Description':<{description_width}} {colour.YELLOW}{colour.BOLD}{'Arguments':<{argument_width}}{colour.RESET}")
-    print("=" * separator_length)
-
-    # Function to format and display commands
-    def display_command_list(title, command_list):
-        if command_list:
-            print(f"{title}")
-            print("-" * separator_length)
-            for command in command_list:
-                # Wrap the description to fit the description width
-                wrapped_desc = textwrap.wrap(command["Description"], width=description_width)
-                # Split arguments into required and optional
-                args = command["Arguments"].split() if command["Arguments"] else []
-                required_args = [arg[1:] if arg.startswith("*") else arg for arg in args if arg.startswith("*")]
-                optional_args = [arg for arg in args if not arg.startswith("*")]
-
-                # Combine required and optional arguments into a single string
-                args_str = " ".join([f"-{arg}" if not arg.startswith("-") else arg for arg in required_args + optional_args])
-
-                # Print the first line (command name, first line of description, and arguments)
-                print(f"{colour.GREEN}{command['Name']:<{name_width}} {colour.BLUE}{wrapped_desc[0] if wrapped_desc else '':<{description_width}} {colour.YELLOW}{colour.BOLD}{args_str:<{argument_width}}{colour.RESET}")
-
-                # Print additional lines for description (if any)
-                for i in range(1, len(wrapped_desc)):
-                    print(f"{colour.GREEN}{'':<{name_width}} {colour.BLUE}{wrapped_desc[i]:<{description_width}} {colour.YELLOW}{colour.BOLD}{'':<{argument_width}}{colour.RESET}")
-
-    # Display categorized commands
-    display_command_list("Commands available to everyone:", none_commands)
-    if user or admin:
-        display_command_list("Commands available to logged-in users:", user_commands)
-    if admin:
-        display_command_list("Commands available to admins:", admin_commands)
-
-# Function to display details of a specific command
 def display_specific_command(command_name, commands):
-    # Search for the command
-    found = False
+    """Displays details of a specific command with properly aligned arguments."""
     for cmd in commands:
         if cmd["Name"] == command_name:
-            found = True
-            # Print the command name and description
             print(f"{colour.GREEN}{'Command:':<15}{colour.RESET} {cmd['Name']}")
             print(f"{colour.BLUE}{'Description:':<15}{colour.RESET} {cmd['Description']}")
+            
+            # Display Command Type above Arguments
+            command_type = cmd.get("Command Type", "Internal - System")
+            print(f"{colour.CYAN}{'Command Type:':<15}{colour.RESET} {command_type}")
 
-            # Split arguments into required and optional
-            args = cmd["Arguments"].split() if cmd["Arguments"] else []
-            required_args = [arg[1:] if arg.startswith("*") else arg for arg in args if arg.startswith("*")]
-            optional_args = [arg for arg in args if not arg.startswith("*")]
+            if cmd.get("Arguments"):
+                args = cmd["Arguments"].split()
+                
+                # Create a more robust argument descriptions parser
+                arg_desc_map = {}
+                if cmd.get("Argument Descriptions"):
+                    # Split by comma, but handle the case where commas might appear in descriptions
+                    raw_descriptions = cmd.get("Argument Descriptions", "")
+                    
+                    # Parse descriptions more carefully
+                    current_desc = ""
+                    in_quotes = False
+                    descriptions = []
+                    
+                    for char in raw_descriptions:
+                        if char == '"':
+                            in_quotes = not in_quotes
+                            current_desc += char
+                        elif char == ',' and not in_quotes:
+                            descriptions.append(current_desc.strip())
+                            current_desc = ""
+                        else:
+                            current_desc += char
+                    
+                    if current_desc.strip():
+                        descriptions.append(current_desc.strip())
+                    
+                    for desc in descriptions:
+                        # Split only on first ":"
+                        parts = desc.split(":", 1)
+                        if len(parts) == 2:
+                            # Clean up the argument name to match the format in the Arguments field
+                            arg_name = parts[0].strip().strip('*-"')
+                            arg_desc = parts[1].strip().strip('"')
+                            arg_desc_map[arg_name] = arg_desc
 
-            # Print required arguments
-            if required_args:
-                print(f"{colour.YELLOW}{'Required Args:':<15}{colour.RESET}")
-                for arg in required_args:
-                    print(f"{' ' * 15} -{arg}")
+                # Separate required and optional arguments
+                required_args = [arg.lstrip('*') for arg in args if arg.startswith('*')]
+                optional_args = [arg for arg in args if not arg.startswith('*')]
 
-            # Print optional arguments
-            if optional_args:
-                print(f"{colour.YELLOW}{'Optional Args:':<15}{colour.RESET}")
-                for arg in optional_args:
-                    print(f"{' ' * 15} -{arg}")
-            break
+                # Print arguments, ensuring correct alignment
+                arg_label = f"{colour.YELLOW}{'Arguments:':<15}{colour.RESET}"
+                first_arg_indent = " " * 15  # Aligns arguments properly
 
-    # If the command is not found, display an error message
-    if not found:
-        print(f"{colour.RED}Error: Command '{command_name}' not found.{colour.RESET}")
+                def format_arg(arg, is_required=True):
+                    """Formats an argument with a required indicator and description."""
+                    # Clean arg name for matching with descriptions
+                    clean_arg = arg.lstrip('*')
+                    display_arg = f"-{clean_arg}" if is_required else f"--{clean_arg}"
+                    # Look up description with normalized name
+                    description = arg_desc_map.get(clean_arg, "No description available")
+                    return f"{display_arg}: {description}"
 
-# Main function to handle command-line arguments
+                # Print required arguments first
+                if required_args:
+                    print(f"{arg_label} {format_arg(required_args[0], True)}")
+                    for arg in required_args[1:]:
+                        print(f"{first_arg_indent} {format_arg(arg, True)}")
+
+                # Print optional arguments next
+                if optional_args:
+                    if not required_args:  # If no required args, align the first optional argument
+                        print(f"{arg_label} {format_arg(optional_args[0], False)}")
+                    else:
+                        print(f"{first_arg_indent} {format_arg(optional_args[0], False)}")
+                    for arg in optional_args[1:]:
+                        print(f"{first_arg_indent} {format_arg(arg, False)}")
+
+            return
+
+    print(f"{colour.RED}Error: Command '{command_name}' not found.{colour.RESET}")
+
+
+def display_commands(admin=False, user=False, specific_command=None):
+    """Displays commands based on user/admin status or a specific command."""
+    commands = load_commands()
+    if specific_command:
+        display_specific_command(specific_command, commands)
+        return
+
+    categorized = categorize_commands(commands)
+
+    # Calculate column widths dynamically
+    max_name_length = max((len(cmd["Name"]) for cmd in commands), default=NAME_MIN_WIDTH)
+    max_arg_length = max((len(cmd.get("Arguments", "")) for cmd in commands), default=ARG_MIN_WIDTH)
+
+    name_width = max(max_name_length, NAME_MIN_WIDTH) + 2
+    argument_width = max(max_arg_length, ARG_MIN_WIDTH) + 2
+    separator_length = name_width + DESC_WIDTH + argument_width + 2
+
+    print(f"{colour.GREEN}{'Command':<{name_width}} {colour.BLUE}{'Description':<{DESC_WIDTH}} {colour.YELLOW}{'Arguments':<{argument_width}}{colour.RESET}")
+    print("=" * separator_length)
+
+    def display_command_list(title, command_list):
+        """Displays a formatted list of commands."""
+        if command_list:
+            print(f"\n{title}")
+            print("-" * separator_length)
+            for cmd in command_list:
+                wrapped_desc = textwrap.wrap(cmd["Description"], width=DESC_WIDTH)
+                args = cmd.get("Arguments", "").split()
+                formatted_args = " ".join([arg.replace("*", "-") for arg in args])
+
+                print(f"{colour.GREEN}{cmd['Name']:<{name_width}} {colour.BLUE}{wrapped_desc[0]:<{DESC_WIDTH}} {colour.YELLOW}{formatted_args:<{argument_width}}{colour.RESET}")
+                for line in wrapped_desc[1:]:
+                    print(f"{'':<{name_width}} {colour.BLUE}{line:<{DESC_WIDTH}} {colour.YELLOW}{'':<{argument_width}}{colour.RESET}")
+
+    display_command_list("Commands available to everyone:", categorized["none"])
+    if user or admin:
+        display_command_list("Commands available to logged-in users:", categorized["user"])
+    if admin:
+        display_command_list("Commands available to admins:", categorized["admin"])
+
+
 def main():
-    # Check if a specific command is requested
-    if len(sys.argv) > 1 and sys.argv[1].startswith("-"):
-        specific_command = sys.argv[1][1:]  # Remove the '-' from the argument
-        display_commands(specific_command=specific_command)
+    """Handles command-line arguments and runs the program."""
+    parser = argparse.ArgumentParser(description="Display available commands.")
+    parser.add_argument("-c", "--command", help="Display details of a specific command")
+    parser.add_argument("-a", "--admin", action="store_true", help="Show admin commands")
+    parser.add_argument("-u", "--user", action="store_true", help="Show user commands")
+
+    args = parser.parse_args()
+
+    if args.command:
+        display_commands(specific_command=args.command)
     else:
-        # Display all commands
-        display_commands(admin=True, user=True)
+        display_commands(admin=args.admin, user=args.user)
+
+def create_new_command():
+    """Prompts the user to create a new command and saves it to the CSV file."""
+    print(f"{colour.GREEN}Creating a new command...{colour.RESET}")
+    
+    # Prompt the user for command details
+    name = input(f"{colour.BLUE}Enter the command name: {colour.RESET}").strip()
+    description = input(f"{colour.BLUE}Enter the command description: {colour.RESET}").strip()
+    arguments = input(f"{colour.BLUE}Enter the command arguments (e.g., *arg1 arg2): {colour.RESET}").strip()
+    arg_descriptions = input(f"{colour.BLUE}Enter the argument descriptions (e.g., arg1:description1, arg2:description2): {colour.RESET}").strip()
+    user_required = input(f"{colour.BLUE}Enter the user access level (none, user, admin): {colour.RESET}").strip().lower()
+    command_type = input(f"{colour.BLUE}Enter the command type (e.g., Internal - System): {colour.RESET}").strip()
+
+    # Validate user_required input
+    if user_required not in ["none", "user", "admin"]:
+        print(f"{colour.RED}Error: Invalid user access level. Must be 'none', 'user', or 'admin'.{colour.RESET}")
+        return
+
+    # Create a dictionary for the new command
+    new_command = {
+        "Name": name,
+        "Description": description,
+        "Arguments": arguments,
+        "Argument Descriptions": arg_descriptions,
+        "User Required": user_required,
+        "Command Type": command_type
+    }
+
+    # Append the new command to the CSV file
+    try:
+        with open(CSV_FILE, mode='a', newline='', encoding="utf-8") as csvfile:
+            fieldnames = ["Name", "Description", "Arguments", "Argument Descriptions", "User Required", "Command Type"]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            # Ensure the file is not empty before writing headers
+            csvfile.seek(0, 2)  # Move to the end of the file
+            if csvfile.tell() == 0:  # Check if the file is empty
+                writer.writeheader()  # Write headers only if the file is empty
+
+            # Write the new command
+            writer.writerow(new_command)
+            print(f"{colour.GREEN}Command '{name}' successfully added!{colour.RESET}")
+    except Exception as e:
+        print(f"{colour.RED}Error: Failed to write to the CSV file. {e}{colour.RESET}")

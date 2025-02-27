@@ -17,6 +17,7 @@ import system.machine_compatibility as ter
 # App files
 import apps.Calculator
 
+version = "1.0.5 Stable Beta 1"
 mach_type = ter.check_machine()
 if mach_type == 0:
     try:
@@ -87,7 +88,6 @@ else:
     user = False
 
 admin_acc = False
-version = "1.0.4"
 runtime = 0
 
 ter.clear_ter(mach_type)
@@ -273,6 +273,12 @@ while runtime != 1:
                     uam.modify_user()
             else:
                 print(f"{c.RED}Admin permissions required{c.RESET}")
+
+    elif userprompt == "ccommand":
+        if admin_acc == True:
+            help.create_new_command()
+        else:
+            print(f"{c.RED}Admin permissions required{c.RESET}")
 
     elif userprompt.startswith("debug"):
         if userprompt == "debug -colour":
