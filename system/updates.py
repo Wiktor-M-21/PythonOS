@@ -28,7 +28,7 @@ def verify_security(version_data):
 
 # Function to fetch the latest version data from GitHub
 def fetch_latest_version():
-    version_file_url = ""
+    version_file_url = "https://raw.githubusercontent.com/Wiktor-M-21/PythonOS/main/system/version.json"
     try:
         response = requests.get(version_file_url)
         if response.status_code == 200:
@@ -67,17 +67,3 @@ def check_for_updates():
     if local_version_data is None:
         print("Failed to load local version data.")
         return
-
-    # Compare versions
-    latest_version = latest_version_data["version"]
-    local_version = local_version_data["version"]
-
-    if local_version < latest_version:
-        print(f"A newer version (v{latest_version}) is available! You are using v{local_version}.")
-    elif local_version == latest_version:
-        print(f"You are using the latest version (v{local_version}).")
-    else:
-        print(f"You are using a newer version (v{local_version}) than the latest release (v{latest_version}).")
-
-# Run the update check
-check_for_updates()
