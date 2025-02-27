@@ -116,7 +116,3 @@ def main():
     else:
         # Display all commands
         display_commands(admin=True, user=True)
-
-# Run the main function
-if __name__ == "__main__":
-    main()
