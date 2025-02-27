@@ -12,6 +12,7 @@ import system.help as help
 import system.user_acc_management as uam
 import system.authentication as authentication
 import system.machine_compatibility as ter
+import system.updates as update
 # import system.loadapps as apps
 
 # App files
