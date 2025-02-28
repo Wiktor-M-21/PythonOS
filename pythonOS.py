@@ -29,6 +29,14 @@ if mach_type == 0:
             os.system("pip3 install git+https://github.com/lukaskollmer/python-touch-id")
             import touchid
 
+try:
+    import rsa
+except ImportError as e:
+    print("To continue, you must install rsa")
+    os.system("pip3 install rsa")
+    import rsa
+
+
 command = "chess"
 if shutil.which(command):
     pass
