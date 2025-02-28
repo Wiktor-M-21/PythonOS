@@ -7,9 +7,9 @@ import rsa
 REMOTE_VERSION_URL = "https://raw.githubusercontent.com/Wiktor-M-21/PythonOS/main/system/version.json"
 REMOTE_SIGNATURE_URL = "https://raw.githubusercontent.com/Wiktor-M-21/PythonOS/main/system/signature.sig"
 # Path to the local version.json file
-LOCAL_VERSION_PATH = "version.json"
+LOCAL_VERSION_PATH = "system/version.json"
 # Path to the public key
-PUBLIC_KEY_PATH = "public_key.pem"
+PUBLIC_KEY_PATH = "system/public_key.pem"
 
 def load_local_version():
     try:
@@ -40,7 +40,7 @@ def load_remote_signature():
 def verify_signature(version_data, signature):
     try:
         with open(PUBLIC_KEY_PATH, "rb") as key_file:
-            public_key = rsa.PublicKey.load_pkcs1(key_file.read())
+            public_key = rsa.PublicKey.load_pkcs1_openssl_pem(key_file.read())
 
         version_hash = hashlib.sha256(version_data.encode()).digest()
         rsa.verify(version_hash, signature, public_key)

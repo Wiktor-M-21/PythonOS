@@ -1,4 +1,5 @@
 {
-    "version": 2,
+    "version": 3,
+    "Changelog": "Version 3 is a continuation of version 2 adding more security",
     "release_date": "2025-02-28"
 }
