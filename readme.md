@@ -5,15 +5,20 @@ Python OS version 1.0.3:
 - **Shell version 1.0.3**:
 help commands improved
 
-- **Shell version 1.0.4 (current version)**
+- **Shell version 1.0.4**
 help command allignment
 help commands for specific commands
 
--**Shell version 1.0.5**
-help command fix
+- **Shell version 1.1 (current version)**
+Official version 1.1!
+update - introduced updates so that it tells you automatically when to update your OS
+help - command fix
 command - added new command to create custom commands
 command - added command type to allow for filtering
+
+-**Shell version 1.1.2**
 user account control - users can become admins removing the seperate admin section
+updates - working on making automatic updates that remove the risk of deletion of details
 
 <ins>**Calculator app**</ins>
 

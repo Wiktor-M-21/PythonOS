@@ -18,7 +18,7 @@ import system.updates as update
 # App files
 import apps.Calculator
 
-version = "1.0.5 Stable Beta 1"
+version = "1.1"
 mach_type = ter.check_machine()
 if mach_type == 0:
     try:
@@ -41,7 +41,8 @@ if platform.system() not in ["Darwin", "Linux"]:
         print("Windows is not compatible with this version of PyOS")
     else:
         print("Your OS is not compatible with this version of PyOS")
-
+updater = update.check_for_updates()
+time.sleep(5)
 # Use python3 pythonOS.py
 done = False
 def animate():
@@ -93,6 +94,8 @@ runtime = 0
 
 ter.clear_ter(mach_type)
 print("PyOS vers", version)
+if updater == True:
+    print("A newer version is available! Go to wiktor-m-21 github to update")
 while runtime != 1:
     userprompt = input("> ")
     userprompt = userprompt.strip()  # Remove leading and trailing spaces
