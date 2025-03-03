@@ -46,7 +46,7 @@ def check_for_updates():
     latest_version = fetch_latest_version()
     if not latest_version:
         print("Failed to retrieve update information.")
-        return
+        return True
     
     local_version = get_local_version()
     
@@ -57,21 +57,19 @@ def check_for_updates():
     
     if not verify_signature(version_data, signature, public_key):
         print("Update verification failed! Possible tampering detected.")
-        return
+        return True
     
     # Compare versions
     if local_version and local_version == latest_version:
         print("You are already on the latest version.")
-        return
+        return True
     
     print(f"New update available! Version {latest_version['Major version']}.{latest_version['Detailed Version']}")
     print("Changelog:")
     for change in latest_version["changelog"].split(","):
         print(f"- {change.strip()}")
-    
-    # Save new version locally as an exact copy of version.json
-    save_new_version(latest_version)
-    print("Update installed successfully. Local version is now identical to version.json.")
+    return False
+        
 
 if __name__ == "__main__":
     check_for_updates()

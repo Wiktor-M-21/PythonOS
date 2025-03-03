@@ -7,6 +7,7 @@ logout,Logs out of the current session,-a,"-a: Log out as admin (optional)",user
 machine,Displays system and software information,,,none,Internal - System
 print,Outputs the provided text to the terminal,*text,"*text: Text to print (required)",none,Internal - System
 exit,Shuts down the system,-force -f,"-force: Forces shutdown (optional), -f: Alias for -force (optional)",none,Internal - System
+version,Checks for updates on Github,,,none,Internal - System
 calc,Opens the calculator application,,,user,Internal - Application
 chess,Launches the Chess application,,,user,External - Application
 user,Manages user accounts,*add *list *modify *remove,"-none: No extension displays the user menu (optional), *add: Adds a new user (required), *list: Lists all users (required), *modify: Modifies a user (required), *remove: Deletes a user (required)",admin,Internal - System

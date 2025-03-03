@@ -49,8 +49,6 @@ if platform.system() not in ["Darwin", "Linux"]:
         print("Windows is not compatible with this version of PyOS")
     else:
         print("Your OS is not compatible with this version of PyOS")
-updater = update.check_for_updates()
-time.sleep(5)
 # Use python3 pythonOS.py
 done = False
 def animate():
@@ -100,10 +98,11 @@ else:
 admin_acc = False
 runtime = 0
 
+update.check_for_updates()
 ter.clear_ter(mach_type)
 print("PyOS vers", version)
-if updater == True:
-    print("A newer version is available! Go to wiktor-m-21 github to update")
+if update.check_for_updates == False:
+    print("A newer version is available type version command to find out more")
 while runtime != 1:
     userprompt = input("> ")
     userprompt = userprompt.strip()  # Remove leading and trailing spaces
@@ -224,6 +223,8 @@ while runtime != 1:
         print("PyOS vers", version)
         if admin_acc == True:
             print("Admin account")
+    elif userprompt in ["vers","version"]:
+        update.check_for_updates()
 
     elif userprompt == "calc":
         if user == True or admin_acc == True:
