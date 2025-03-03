@@ -16,7 +16,7 @@ help - command fix
 command - added new command to create custom commands
 command - added command type to allow for filtering
 
--**Shell version 1.1.2**
+- **Shell version 1.1.2**
 user account control - users can become admins removing the seperate admin section
 updates - working on making automatic updates that remove the risk of deletion of details
 

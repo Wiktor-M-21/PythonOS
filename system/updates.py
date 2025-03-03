@@ -1,78 +1,77 @@
-import json
 import requests
-import hashlib
+import json
 import rsa
+import os
 
-# URL of the remote version.json file
-REMOTE_VERSION_URL = "https://raw.githubusercontent.com/Wiktor-M-21/PythonOS/main/system/version.json"
-REMOTE_SIGNATURE_URL = "https://raw.githubusercontent.com/Wiktor-M-21/PythonOS/main/system/signature.sig"
-# Path to the local version.json file
-LOCAL_VERSION_PATH = "system/version.json"
-# Path to the public key
-PUBLIC_KEY_PATH = "system/public_key.pem"
+# Constants
+VERSION_FILE = "system/version.json"
+UPDATE_URL = "https://raw.githubusercontent.com/Wiktor-M-21/PythonOS/main/system/version.json"
+PUBLIC_KEY_PATH = "system/public_key.pem"  # Store your public key here
 
-def load_local_version():
+# Load public key
+def load_public_key():
+    with open(PUBLIC_KEY_PATH, "rb") as f:
+        return rsa.PublicKey.load_pkcs1(f.read())
+
+# Verify signature
+def verify_signature(data: str, signature: bytes, public_key):
     try:
-        with open(LOCAL_VERSION_PATH, "r") as file:
-            return file.read()
-    except FileNotFoundError:
-        print("Local version file not found.")
-        return None
-
-def load_remote_version():
-    try:
-        response = requests.get(REMOTE_VERSION_URL, timeout=5)
-        response.raise_for_status()
-        return response.text
-    except requests.RequestException as e:
-        print(f"Error fetching remote version: {e}")
-        return None
-
-def load_remote_signature():
-    try:
-        response = requests.get(REMOTE_SIGNATURE_URL, timeout=5)
-        response.raise_for_status()
-        return response.content
-    except requests.RequestException as e:
-        print(f"Error fetching signature: {e}")
-        return None
-
-def verify_signature(version_data, signature):
-    try:
-        with open(PUBLIC_KEY_PATH, "rb") as key_file:
-            public_key = rsa.PublicKey.load_pkcs1_openssl_pem(key_file.read())
-
-        version_hash = hashlib.sha256(version_data.encode()).digest()
-        rsa.verify(version_hash, signature, public_key)
+        rsa.verify(data.encode(), signature, public_key)
         return True
     except rsa.VerificationError:
-        print("Version file verification failed!")
-        return False
-    except FileNotFoundError:
-        print("Public key not found.")
         return False
 
-def check_for_update():
-    local_data = load_local_version()
-    remote_data = load_remote_version()
-    remote_signature = load_remote_signature()
+# Get the current local version
+def get_local_version():
+    if not os.path.exists(VERSION_FILE):
+        return None
+    with open(VERSION_FILE, "r") as f:
+        return json.load(f)
 
-    if not local_data or not remote_data or not remote_signature:
+# Save new version locally as an exact copy of version.json
+def save_new_version(version_data):
+    with open(VERSION_FILE, "w") as f:
+        json.dump(version_data, f, indent=4)
+
+# Fetch the latest update
+def fetch_latest_version():
+    response = requests.get(UPDATE_URL)
+    if response.status_code == 200:
+        return response.json()
+    return None
+
+# Check for updates
+def check_for_updates():
+    print("Checking for updates...")
+    latest_version = fetch_latest_version()
+    if not latest_version:
+        print("Failed to retrieve update information.")
         return
-
-    if verify_signature(remote_data, remote_signature):
-        local_version = json.loads(local_data).get("version", 0)
-        remote_version = json.loads(remote_data).get("version", 0)
-        release_date = json.loads(remote_data).get("release_date", "Unknown release date")
-        
-        if remote_version > local_version:
-            print(f"Update available! New version: {remote_version}")
-            print(f"Changelog: {json.loads(remote_data).get('changelog', 'No changelog available.')}")
-            print(f"Release date: {release_date}")
-        else:
-            print("You are up to date.")
-    else:
-        print("The installed version.json is NOT legitimate!")
+    
+    local_version = get_local_version()
+    
+    # Ensure update is legit
+    public_key = load_public_key()
+    signature = bytes.fromhex(latest_version.get("signature", ""))
+    version_data = json.dumps({k: v for k, v in latest_version.items() if k != "signature"}, separators=(",", ":"))
+    
+    if not verify_signature(version_data, signature, public_key):
+        print("Update verification failed! Possible tampering detected.")
+        return
+    
+    # Compare versions
+    if local_version and local_version == latest_version:
+        print("You are already on the latest version.")
+        return
+    
+    print(f"New update available! Version {latest_version['Major version']}.{latest_version['Detailed Version']}")
+    print("Changelog:")
+    for change in latest_version["changelog"].split(","):
+        print(f"- {change.strip()}")
+    
+    # Save new version locally as an exact copy of version.json
+    save_new_version(latest_version)
+    print("Update installed successfully. Local version is now identical to version.json.")
 
 if __name__ == "__main__":
-    check_for_update()
+    check_for_updates()

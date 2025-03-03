@@ -1,5 +1,8 @@
 {
-    "version": 3,
-    "Changelog": "Version 3 is a continuation of version 2 adding more security",
-    "release_date": "2025-02-28"
+    "Major version": "1",
+    "Detailed Version": "1",
+    "Beta update": "False",
+    "release_date": "2025-02-28",
+    "changelog": "Update: Introduction to updates where you check for the newest version of PythonOS, Update: Check version with vers and introduced future of updating automatically",
+    "signature": "56a4c921e2194c9918761d5560bbb9ddcd3e8166d4c6131435793c49dfb7c2caeef68281ac5b643330d60d3198d2dcf3b21eccdb4e62f79f748d77d30a8dd7b4cf036c42fac2edc027943588753bbda7dbb83d1b7c8360ee3f54c44e3f094393e4f2b672e2e42ae099f0209a283f0a1f65a4e8d1b234b6290ad1443d11be001a6faccb891577afed2c7be123a49a9887a59544fbf72d6743a722ceec8392cb08573912a8c76fddbf9cf5b41dd6365d1b52df07995afb7bea5f042f51f9d1fd7a3b4a876b0c87d1de995e6f925e0345aa74cd8ea1bf9e3127253f9e50b5666e4589abd4bd8daad36aa922d699f17592805e16da4a63eda7d25dc2faf4bac59ec0"
 }
