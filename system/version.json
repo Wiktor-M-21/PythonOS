@@ -1,8 +1,8 @@
 {
     "Major version": "1",
-    "Detailed Version": "1",
+    "Detailed Version": "2",
     "Beta update": "False",
     "release_date": "2025-02-28",
     "changelog": "Update: Introduction to updates where you check for the newest version of PythonOS, Update: Check version with vers and introduced future of updating automatically",
-    "signature": "56a4c921e2194c9918761d5560bbb9ddcd3e8166d4c6131435793c49dfb7c2caeef68281ac5b643330d60d3198d2dcf3b21eccdb4e62f79f748d77d30a8dd7b4cf036c42fac2edc027943588753bbda7dbb83d1b7c8360ee3f54c44e3f094393e4f2b672e2e42ae099f0209a283f0a1f65a4e8d1b234b6290ad1443d11be001a6faccb891577afed2c7be123a49a9887a59544fbf72d6743a722ceec8392cb08573912a8c76fddbf9cf5b41dd6365d1b52df07995afb7bea5f042f51f9d1fd7a3b4a876b0c87d1de995e6f925e0345aa74cd8ea1bf9e3127253f9e50b5666e4589abd4bd8daad36aa922d699f17592805e16da4a63eda7d25dc2faf4bac59ec0"
+    "signature": "32d912dc0306b5dde5c73b898381c7d76c8a81aae36a1836fc59f8fd1381b2f209948b72502d392be0d8dd6793f7c473f1f3ba5925a14ea208d27f93a3554e50d35a9f3d5f5c7cbac30acef46fac8e2c85b638aa6b01ac0d96f88bd55debd1a8fde93ce833a12c5857f1bacf22989a3a13475857a71fb8b2b4aad7629b8899b1cb8a1b4e7ff664a65645a90367aa1940286c0487d6d84b86aff57efc439b121434a7f7d8e3c2f55d68efe6f875362f73e5bb2e98b2dd42acbedf46634b49ef00916bc9bff1f724a65efee0623451d8eee8e2a253d4e7475a797b64140d0c32bc188cf449478ae42bc04f08200bedd056656a442adce1edb344cb0cffc76624e3"
 }
