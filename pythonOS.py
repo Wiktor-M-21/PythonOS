@@ -6,11 +6,11 @@ import threading
 import sys
 import platform
 import shutil
+import getpass
 
 # System files
 import system.help as help
 import system.user_acc_management as uam
-import system.authentication as authentication
 import system.machine_compatibility as ter
 import system.updates as update
 # import system.loadapps as apps
@@ -18,8 +18,21 @@ import system.updates as update
 # App files
 import apps.Calculator
 
-version = "1.1"
+version = "1.3"
+
+
+username_str = ""
+admin_int = 0
+
+
 mach_type = ter.check_machine()
+if platform.system() not in ["Darwin", "Linux"]:
+    if platform.system() == "Windows":
+        print("Windows is not compatible with this version of PyOS")
+        quit()
+    else:
+        print("Your OS is not compatible with this version of PyOS")
+# Use python3 pythonOS.py
 if mach_type == 0:
     try:
         import touchid
@@ -44,12 +57,6 @@ else:
     print("Installing requirements")
     os.system("pip3 install cl-chess")
 
-if platform.system() not in ["Darwin", "Linux"]:
-    if platform.system() == "Windows":
-        print("Windows is not compatible with this version of PyOS")
-    else:
-        print("Your OS is not compatible with this version of PyOS")
-# Use python3 pythonOS.py
 done = False
 def animate():
     for c in itertools.cycle(['.', '..', '...']):
@@ -58,60 +65,41 @@ def animate():
         sys.stdout.write('\rOpening ' + program + " " + c)
         sys.stdout.flush()
         time.sleep(0.5)
-        ter.clear_ter(mach_type)
+        ter.clear_ter()
     sys.stdout.write('\rDone!     ')
     time.sleep(1)
-    ter.clear_ter(mach_type)
+    ter.clear_ter()
 
-is_logged_in, rows = authentication.check_last_logged_in()
-retry = 0
-if is_logged_in == True:
-    while retry == 0:
-        ter.clear_ter(mach_type)
-        user_choice = input(f"{c.BLUE}user {rows[0]} is logged in.{c.RESET} \nWould you like to continue as {rows[1]}\n(y/n)\n> ")
-        if user_choice == "y":
-            user_password = input("Enter your pincode \n> ")
-            retry2 = 0
-            while retry2 == 0:
-                if user_password == rows[3]:
-                    username = rows[1]
-                    user = True
-                    retry = 1
-                    retry2 = 1
-                else:
-                    print(f"{c.RED}Passcode is incorrect{c.RESET}")
-                    time.sleep(1)
-                    ter.clear_ter(mach_type)
-                    user_choice = ("Would you like to try again? \n(y/n) \n> ")
-                    break
+ter.clear_ter()
+acc_type_int, username_str, pin = uam.last_boot_logged_in()
 
-        elif user_choice == "n":
-            authentication.logout(rows[1])
-            user = False
-            retry = 1
-        else:
-            pass
+if acc_type_int == 1:
+    user_bool = True
+    admin_int = 1
+elif acc_type_int == 2:
+    user_bool = True
+    admin_int = 2
+elif acc_type_int == 3:
+    user_bool = True
 else:
-    username = ""
-    user = False
+    user_bool = False
 
-admin_acc = False
-runtime = 0
+
 
 update.check_for_updates()
-ter.clear_ter(mach_type)
+ter.clear_ter()
 print("PyOS vers", version)
 if update.check_for_updates == False:
     print("A newer version is available type version command to find out more")
-while runtime != 1:
+while True:
     userprompt = input("> ")
     userprompt = userprompt.strip()  # Remove leading and trailing spaces
 
     if userprompt in ["help", "?", "h"]:
         # Display general help
-        if admin_acc == True:
+        if admin_int >= 1:
             help.display_commands(admin=True)
-        elif user == True:
+        elif user_bool == True:
             help.display_commands(user=True)
         else:
             help.display_commands()
@@ -120,43 +108,62 @@ while runtime != 1:
         parts = userprompt.split(" ", 1)  # Split into command and argument
         if len(parts) > 1 and parts[1].startswith("-"):
             specific_command = parts[1][1:]  # Remove the "-" prefix
-            if admin_acc == True:
+            if admin_int >= 1:
                 help.display_commands(admin=True, specific_command=specific_command)
-            elif user == True:
-                help.display_commands(user=True, specific_command=specific_command)
+            elif user_bool == True:
+                help.display_commands(user_bool=True, specific_command=specific_command)
             else:
                 help.display_commands(specific_command=specific_command)
         else:
             print(f"{c.RED}Invalid argument: {parts[1]}{c.RESET}")
-    elif userprompt == "login":
-        if user == True:
-            print("User already selected")
-        else:
-            # Use the login system in this program
-            user_status, logged_in_user = authentication.login_system()
-
-            if user_status:
-                ter.clear_ter(mach_type)
-                print(f"User '{logged_in_user}' logged in successfully!")
-                username = logged_in_user
-                user = True
-
+            
+    elif userprompt.startswith("log"):
+        if userprompt == "log -i":
+            if user_bool == True:
+                print("User already selected")
             else:
-                print("Login failed.")
-                time.sleep(1)
-                print("PyOS vers.", version)
+                # Use the login system in this program
+                username_str, admin_int, pin = uam.login_system()
+                if username_str != "":
+                    username_bool = True
+                else:
+                    username_bool = False
 
-    elif userprompt == "logout":
-        if user == True:
-            authentication.logout(username)
-            print(f"User {username} has been logged out")
-            user = False
-            time.sleep(1)
-            ter.clear_ter(mach_type)
-            print("PyOS vers", version)
-            username = ""
+                if username_bool:
+                    ter.clear_ter()
+                    print(f"User '{username_str}' logged in successfully!")
+                    time.sleep(3)
+                    user_bool = True
+                if admin_int >= 1:
+                    print("PyOS vers", version)
+                    print(f"Admin account: {username_str}")
+                elif admin_int == 2:
+                    print("PyOS vers", version)
+                    print(f"Owner account: {username_str}")
+
+
+        elif userprompt == "log -o":
+            if user_bool == True:
+                uam.logout(username_str)
+                print(f"User {username_str} has been logged out")
+                user_bool = False
+                admin_int = 0
+                time.sleep(1)
+                ter.clear_ter()
+                print("PyOS vers", version)
+                username_str = ""
+            else:
+                print(f"{c.RED}Error: You must be logged in to perform this command{c.RESET}")
+        elif userprompt == "login":
+            print("Use log -i to log in")
+
+        elif userprompt == "logout":
+            if user_bool == True:
+                print("Use log -o to log out")
+            else:
+                print(f"{c.RED}Error: You must be logged in to perform this command{c.RESET}")
         else:
-            print(f"{c.RED}You must be logged in to perform this command{c.RESET}")
+            print(f"{c.RED}Error: Command not found{c.RESET}")
 
     elif userprompt.startswith("print"):
         if userprompt.startswith("print[") and userprompt.endswith("]"):
@@ -168,67 +175,44 @@ while runtime != 1:
 
     elif userprompt.startswith("exit"):
         if userprompt in ["exit -force", "exit -f"]:
-            ter.clear_ter(mach_type)
+            ter.clear_ter()
             exit()
         elif userprompt == "exit":
-            sure = input("Are your sure? \n> ")
-            if sure in ["yes", "y", "1"]:
-                print("Exiting")
-                ter.clear_ter(mach_type)
-                exit()
-            else:
-                ter.clear_ter(mach_type)
-                print("PyOS vers", version)
+            if user_bool == False:
+                sure = input("Are your sure? (y/n) \n> ")
+                if sure in ["yes", "y", "1"]:
+                    print("Exiting")
+                    ter.clear_ter()
+                    exit()
+                else:
+                    ter.clear_ter()
+                    print("PyOS vers", version)
+            elif user_bool == True:
+                logout = input("Would you like to logout? (y/n)\n> ")
+                if logout in ["yes", "y", "1"]:
+                    uam.logout(username_str)
+                    print("Exiting")
+                    ter.clear_ter()
+                    exit()
+                else:
+                    ter.clear_ter()
+                    print("PyOS vers", version)
+
+
         else:
             print(f"{c.RED} Command not found: {userprompt}{c.RESET}")
 
-    elif userprompt.startswith("admin"):
-        if userprompt == "admin -fp":
-            if admin_acc == True:
-                print("Admin already logged in")
-            else:
-                if mach_type == 0:
-                    auth =ter.fingerprint_trial()
-                    if auth == True:
-                        admin_acc = True
-                        admin_acc = True
-                        ter.clear_ter(mach_type)
-                        print("PyOS vers", version)
-                        print("Admin account")
-                        user == True
-                        username = "admin"
-                    else:
-                        print(f"{c.RED}Error: Authenication failed{c.RESET}")
-                else:
-                    print(f"Machine is not compatible with fingerprint technology type {c.GREEN}\n> admin{c.RESET}")
-        elif userprompt == "admin":
-            if admin_acc == True:
-                print("Admin already logged in")
-            else:
-                auth = ter.auth_sys(mach_type)
-                if auth == True:
-                    admin_acc = True
-                    ter.clear_ter(mach_type)
-                    print("PyOS vers", version)
-                    print("Admin account")
-                    user == True
-                    username = "admin"
-                else:
-                    print(f"{c.RED}Error: Authenication failed{c.RESET}")
-        else:
-            print(f"{c.RED}Error: Invalid command{c.RESET}")
-
     elif userprompt in ["clear", "clr"]:
-        ter.clear_ter(mach_type)
+        ter.clear_ter()
         print("PyOS vers", version)
-        if admin_acc == True:
+        if admin_int >= 1:
             print("Admin account")
     elif userprompt in ["vers","version"]:
         update.check_for_updates()
 
     elif userprompt == "calc":
-        if user == True or admin_acc == True:
-            ter.clear_ter(mach_type)
+        if user_bool == True:
+            ter.clear_ter()
             program = "Calculator"
             t = threading.Thread(target=animate)
             t.start()
@@ -237,61 +221,58 @@ while runtime != 1:
             done = True
             time.sleep(2)
             apps.Calculator.calculator()
-            ter.clear_ter(mach_type)
+            ter.clear_ter()
             print("PyOS vers", version)
-            if admin_acc == True:
+            if admin_int >= 1:
                 print("Admin Account")
         else:
             print(f"{c.RED}Error: User must be logged in to use this{c.RESET}")
 
     elif userprompt.startswith("user"):
-        if userprompt in ["user -a", "user -active"]:
-            if username == "":
-                print(f"{c.RED}No user{c.RESET}")
-            else:
-                print(username)
-            print(" Is admin: \n", bool(admin_acc))
-
-        else:
-            if admin_acc == True:
-                if userprompt == "user":
-                    uam.uam_menu()
-                elif userprompt in ["user -help"]:
-                    print(f"user {c.BLUE}-arg{c.RESET}")
-                    print("Available commands:")
-                    print(f"{c.GREEN}-help    {c.BLUE}Shows help about user argument")
-                    print(f"{c.GREEN}-add     {c.BLUE}Add another user")
-                    print(f"{c.GREEN}-list    {c.BLUE}View all users")
-                    print(f"{c.GREEN}-modify  {c.BLUE}Edit a user")
-                    print(f"{c.GREEN}-remove  {c.BLUE}Removes a user")
-                elif userprompt == "user -list":
-                    show_passwords = input("Show passwords? (y/n): ")
-                    if show_passwords in ["y", "1"]:
-                        try:
-                            verify_fp = touchid.authenticate()
-                        except Exception:
-                            print("Could not verify admin")
-                            uam.list_users()
-                        if verify_fp == True:
-                            uam.list_users(show_passwords)
-                        else:
-                            uam.list_users()
-                    else:
-                        uam.list_users()
-                elif userprompt == "user -add":
+        if admin_int >= 1:
+            if userprompt == "user":
+                uam.uam_menu(username_str,admin_int,pin)
+            elif userprompt == "user -list":
+                auth = uam.admin_auth(admin_int,pin)
+                if auth == True:
+                    print("Authorisation failed")
+                    uam.list_users(True)
+                else:
+                    print("Authorisation failed")
+            elif userprompt == "user -add":
+                auth = uam.admin_auth(admin_int,pin)
+                if auth == True:
+                    print("Authorisation failed")
                     uam.add_user()
-                elif userprompt == "user -remove":
+                else:
+                    print("Authorisation failed")
+            elif userprompt == "user -remove":
+                auth = uam.admin_auth(admin_int,pin)
+                if auth == True:
+                    print("Authorisation failed")
                     uam.remove_user()
-                elif userprompt == "user -modify":
-                    uam.modify_user()
+                else:
+                    print("Authorisation failed")
+            elif userprompt == "user -modify":
+                auth = uam.admin_auth(admin_int,pin)
+                if auth == True:
+                    print("Authorisation failed")
+                    uam.modify_user(username_str)
+                else:
+                    print("Authorisation failed")
             else:
-                print(f"{c.RED}Admin permissions required{c.RESET}")
+                print(f"{c.RED}Error: Command not found{c.RESET}")
 
     elif userprompt == "ccommand":
-        if admin_acc == True:
-            help.create_new_command()
+        if admin_int >= 1:
+            auth = uam.admin_auth(admin_int,pin)
+            if auth == True:
+                print("Authorisation failed")
+                help.create_new_command()
+            else:
+                print("Authorisation failed")
         else:
-            print(f"{c.RED}Admin permissions required{c.RESET}")
+            print(f"{c.RED}Error: Command not found{c.RESET}")
 
     elif userprompt.startswith("debug"):
         if userprompt == "debug -colour":
@@ -306,16 +287,32 @@ while runtime != 1:
 
                 print(f"{colours[y]}Hello")
                 y = y + 1
+        elif userprompt == "debug -user":
+            if username_str == "":
+                print(f"{c.RED}No user{c.RESET}")
+            else:
+                print(username_str)
+            print(f" Is admin:{admin_int}")
+        
         elif userprompt in ["debug", "debug "]:
             print(f"{c.RED}Error: Debug function name required{c.RESET}")
         else:
             print(f"{c.RED}Error: Function doesn't exist{c.RESET}")
 
     elif userprompt == "machine":
-        if platform.system() == "Darwin":
+        if mach_type == 0:
             print(f"System OS: MacOS \nOS Version: {platform.release()}")
+            print(f"TouchID compatible")
+        elif mach_type == 1:
+            print(f"System OS: MacOS \nOS Version: {platform.release()}")
+        elif mach_type == 2:
+            print(f"System OS: Windows \nOS Version: {platform.release()}")
+        elif mach_type == 3:
+            print(f"System OS: Linux \nOS Version: {platform.release()}")
+        else:
+            print(f"{c.RED}Error: Could not find machine information{c.RESET}")
     elif userprompt == "chess":
-        if user == True:
+        if user_bool == True:
             program = "Chess"
             t = threading.Thread(target=animate)
             t.start()
@@ -324,7 +321,7 @@ while runtime != 1:
             time.sleep(2)
 
             os.system("chess")
-            ter.clear_ter(mach_type)
+            ter.clear_ter()
             print("PyOS vers", version)
         else:
             print(f"{c.RED}Error: User must be logged in to use this{c.RESET}")

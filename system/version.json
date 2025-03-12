@@ -2,7 +2,7 @@
     "Major version": "1",
     "Detailed Version": "3",
     "Beta update": "False",
-    "release_date": "2025-03-03",
-    "changelog": "Update: Introduction to updates where you check for the newest version of PythonOS, Update: Check version with vers and introduced future of updating automatically",
-    "signature": "0fb2d908cff07d79b7998644aa3c38ee5589fdc4d1695cc28ccd1b558af6c710e043c8e60b0ae8850f6b561184ab6f48468afd64516bc3a416a44f119575503134997f828775051be07b072ab733ba1950f0de60e459dc2125479bb8e71089ecffac8f37da6f26da90f10b384c9e05162cb8bc1c3f9420ae86485a78146e5017c3c05e84eacddb9016d73c0be459faa27fa91dcfaa224a419797d7c0fba383b48e61a054e1e8ff69850e28d19137d82d246a66bdb4cd3dce0928ffc177d3a8c047c9e5f3e578eb0c8587a9989467cd4628d6f1282b3a1560c5d376b6873fd10c17c841411617a49d58469b4c8a7b4610e10fd9f1e73390f8483e26c544124b06"
+    "release_date": "2025-03-12",
+    "changelog": "user account control: users can become admins removing the seperate admin section, user account control: 1 admin has to be owner and can use the fingerprint scanning if they own a compatible computer, user account control: overhaul to the user management, user account control: ownership system",
+    "signature": "4e31f6e40965a14596c51c67a7fb17c9233a4c31c52a04874d1a06b109cf4b9702c605b01edcf8effc594df957addb8bff15c9f6b1ad9de76e2d92d57ad667f68be268df26490fb5b78acae58c9c090d03e7e9c9517f847313abc05374745675fe3fca53cc6cc7377f2dc7de1ef498b8a04fdb883d34b235d7d25f26920445993385621e0438d1b2f34ea11ee42b2690f8d02b1288e009572cbe55667affc919a5b37aebe72d63270bf7b402f6d956798231b3b636be2d0296c75edef9024d1e005b311ce672c5e6cd787f6c9252600727a6c3e1089a95f60dfa12ee947ecb0c99ad26c50c5ec9251242f5e7aa0555d54b49d62c39a3ce7d681a73b1d60e3378"
 }

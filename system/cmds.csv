@@ -1,15 +1,13 @@
 Name,Description,Arguments,Argument Descriptions,User Required,Command Type
-admin,Grants administrative access,*fp *auth_code,"*fp: Fingerprint (required), *auth_code: Authentication code (required)",none,Internal - System
 clear,Clears the terminal screen,,,none,Internal - System
 help,Displays a list of available commands and their descriptions,,,none,Internal - System
-login,Logs into the system,,,none,Internal - System
-logout,Logs out of the current session,-a,"-a: Log out as admin (optional)",user,Internal - System
+log,Command used to track and manage user login and logout activities within the system.,-i -o,"-i: Command to log a user in, -o: Command for loging a user out",none,Internal - System
 machine,Displays system and software information,,,none,Internal - System
-print,Outputs the provided text to the terminal,*text,"*text: Text to print (required)",none,Internal - System
+print,Outputs the provided text to the terminal,*[text],"*text: Text to print (required)",none,Internal - System
 exit,Shuts down the system,-force -f,"-force: Forces shutdown (optional), -f: Alias for -force (optional)",none,Internal - System
 version,Checks for updates on Github,,,none,Internal - System
 calc,Opens the calculator application,,,user,Internal - Application
 chess,Launches the Chess application,,,user,External - Application
 user,Manages user accounts,*add *list *modify *remove,"-none: No extension displays the user menu (optional), *add: Adds a new user (required), *list: Lists all users (required), *modify: Modifies a user (required), *remove: Deletes a user (required)",admin,Internal - System
-debug,Enables debugging mode for the terminal,*colour,"*colour: Enables color debugging (required)",none,Internal - System
+debug,Enables debugging mode for the terminal,*colour *user,"*colour: Enables color debugging (required), *user: Checks user status and admin status of that user (required)",none,Internal - System
 ccommand,Allows the creaton of new commands,,,admin,Internal - System
