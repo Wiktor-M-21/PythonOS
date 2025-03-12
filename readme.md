@@ -9,14 +9,14 @@ help commands improved
 help command allignment
 help commands for specific commands
 
-- **Shell version 1.1 (current version)**
+- **Shell version 1.1**
 Official version 1.1!
 update - introduced updates so that it tells you automatically when to update your OS
 help - command fix
 command - added new command to create custom commands
 command - added command type to allow for filtering
 
-- **Shell version 1.1.2**
+- **Shell version 1.1.2 (current version)**
 user account control - users can become admins removing the seperate admin section
 user account control - 1 admin has to be owner and can use the fingerprint scanning if they own a compatible computer
 user account control - overhaul to the user management
