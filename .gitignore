@@ -1,9 +1,0 @@
-/.gitignore
-/.DS_Store
-/__pycache__
-/downloaded_version.json
-apps/__pycache__
-system/login_log.txt
-system/private_key.pem
-system/sign_version.py
-system/local_signature.sig
