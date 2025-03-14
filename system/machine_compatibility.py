@@ -63,9 +63,9 @@ def auth_sys(owner_pin):
             return False
 
 def clear_ter():
-    if machine_type == 0 or machine_type == 2:
+    if machine_type == 0 or machine_type == 3:
         os.system("clear")
-    elif machine_type == 1:
+    elif machine_type == 2:
         os.system("cls")
     else:
         print("ERROR")

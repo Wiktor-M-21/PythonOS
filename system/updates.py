@@ -1,7 +1,14 @@
 import requests
 import json
-import rsa
 import os
+
+
+try:
+    import rsa
+except ImportError as e:
+    print("To continue, you must install rsa")
+    os.system("pip3 install rsa")
+    import rsa
 
 # Constants
 VERSION_FILE = "system/version.json"
