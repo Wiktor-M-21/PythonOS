@@ -16,7 +16,7 @@ def check_machine():
         else:
             machine_type = 1
             return 1
-    elif machine == "windows":
+    elif machine == "Windows":
         machine_type = 2
         return 2
     elif machine == "Linux":
