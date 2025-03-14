@@ -29,7 +29,9 @@ mach_type = ter.check_machine()
 if platform.system() not in ["Darwin", "Linux"]:
     if platform.system() == "Windows":
         print("Windows is not compatible with this version of PyOS")
-        quit()
+        continue_ = input("Type YES to continue anyway \n> ")
+        if continue_ != "YES":
+            quit()
     else:
         print("Your OS is not compatible with this version of PyOS")
 # Use python3 pythonOS.py

@@ -16,12 +16,16 @@ help - command fix
 command - added new command to create custom commands
 command - added command type to allow for filtering
 
-- **Shell version 1.1.2 (current version)**
+- **Shell version 1.1.2**
 user account control - users can become admins removing the seperate admin section
 user account control - 1 admin has to be owner and can use the fingerprint scanning if they own a compatible computer
 user account control - overhaul to the user management
 
-- **Shell version 1.1.3**
+- **Shell version 1.1.3 (current version)**
+Windows - compatibility with windows OS
+Linux - compatibility to Linux OS
+
+- **Shell version 1.3**
 updates - working on making automatic updates that remove the risk of deletion of details
 
 <ins>**Calculator app**</ins>
