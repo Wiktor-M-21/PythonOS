@@ -6,7 +6,6 @@ import threading
 import sys
 import platform
 import shutil
-import getpass
 
 # System files
 import system.help as help
@@ -16,7 +15,7 @@ import system.updates as update
 # import system.loadapps as apps
 
 # App files
-import apps.Calculator
+import apps.internal.Calculator
 
 version = "1.3"
 
@@ -222,7 +221,7 @@ while True:
             time.sleep(5)
             done = True
             time.sleep(2)
-            apps.Calculator.calculator()
+            apps.internal.Calculator.calculator()
             ter.clear_ter()
             print("PyOS vers", version)
             if admin_int >= 1:
